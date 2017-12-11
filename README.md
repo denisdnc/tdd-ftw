@@ -1,6 +1,6 @@
 # Exercício TDD
 
-##Feature: Criação de usuário
+## Feature: Criação de usuário
 
 Como: usuário do sistema  
 Eu quero: me cadastrar no sistema  
@@ -33,7 +33,7 @@ Status para retonar:
 - 500 em caso de erro de servidor
 
 
-##Feature: Validação de CPF no SERASA
+## Feature: Validação de CPF no SERASA
 
 Como: usuário do sistema
 Eu quero: consultar meu CPF no SERASA
