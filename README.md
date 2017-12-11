@@ -44,7 +44,7 @@ Devemos:
 - consultar API do SERASA
 - retornar aos seguintes atributos:
 
-URL a ser criado: GET: /serasa/status/{document}
+URL a ser criado: GET: /users/serasa/status/{document}
 ```json
   {
     "document": "04715476975",
@@ -56,6 +56,7 @@ URL a ser criado: GET: /serasa/status/{document}
 ```
 
 Regras:
+- validar campo obrigatório: CPF
 - verificar se ele existe no sistema e caso não exista devovler erro
 - traduzir códigos numéricos da API do SERASA para os códigos abaixo:
     - Possíveis status:

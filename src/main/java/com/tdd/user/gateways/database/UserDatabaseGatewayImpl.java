@@ -18,4 +18,10 @@ public class UserDatabaseGatewayImpl implements UserDatabaseGateway {
     public User create(User user) {
         return repository.save(user);
     }
+
+    @Override
+    public User findByDocument(String document) {
+        // TODO
+        return null;
+    }
 }
