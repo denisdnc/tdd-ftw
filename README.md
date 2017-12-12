@@ -28,7 +28,7 @@ URL a ser criado: GET: /users
 
 
 Status para retonar:
-- 200 em caso de sucesso
+- 201 em caso de sucesso
 - 422 em caso de dos campos obrigatórios não existirem
 - 500 em caso de erro de servidor
 
@@ -57,7 +57,7 @@ URL a ser criado: GET: /users/serasa/status/{document}
 
 Regras:
 - validar campo obrigatório: CPF
-- verificar se ele existe no sistema e caso não exista devovler erro
+- verificar se ele existe no sistema e caso não exista devolver erro
 - traduzir códigos numéricos da API do SERASA para os códigos abaixo:
     - Possíveis status:
         - 1 = PENDING_DEBIT

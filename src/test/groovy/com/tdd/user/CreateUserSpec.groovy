@@ -20,7 +20,7 @@ class CreateUserSpec extends Specification {
     def "validate mandatory parameters"() {
         given: "an user without mandatory parameters"
 
-        User user = new User()
+        User user = new User(null, "", "", null)
 
         when: "create user"
 
@@ -28,8 +28,8 @@ class CreateUserSpec extends Specification {
 
         then: "should returns errors"
 
-        result.errors.stream().anyMatch { error -> error == "name is mandatory" }
-        result.errors.stream().anyMatch { error -> error == "document is mandatory" }
+        result.errors.stream().anyMatch { error -> error.message == "name is mandatory" }
+        result.errors.stream().anyMatch { error -> error.message == "document is mandatory" }
     }
 
     def "create user with success"() {

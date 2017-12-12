@@ -4,3 +4,7 @@ spring:
       database: tdd
       host: localhost
       port: 27017
+
+serasa:
+  name: serasa
+  url: http://wispy-thunder-8951.getsandbox.com

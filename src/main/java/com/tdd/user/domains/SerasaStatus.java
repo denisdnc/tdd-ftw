@@ -1,18 +1,15 @@
 package com.tdd.user.domains;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+public enum SerasaStatus {
+    PENDING_DEBIT("1"), NO_DEBIT("2");
 
-import java.util.List;
+    String value;
 
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
-public class SerasaStatus {
-    private String document;
-    private String status;
-    private List<Error> errors;
+    SerasaStatus(String value) {
+        this.value = value;
+    }
+
+    public String getValue() {
+        return value;
+    }
 }

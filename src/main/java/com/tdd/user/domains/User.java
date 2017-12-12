@@ -20,6 +20,6 @@ public class User {
     private String id;
     private String name;
     private String document;
-    private List<String> errors;
+    private List<Error> errors;
 
 }

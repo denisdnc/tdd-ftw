@@ -2,8 +2,11 @@ package com.tdd.user.usecases;
 
 import com.tdd.user.domains.Error;
 import com.tdd.user.domains.SerasaStatus;
+import com.tdd.user.domains.SerasaStatusWrapper;
 import com.tdd.user.domains.User;
 import com.tdd.user.gateways.database.UserDatabaseGateway;
+import com.tdd.user.gateways.httpclient.SerasaGateway;
+import com.tdd.user.gateways.httpclient.SerasaIntegrationStatus;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -14,13 +17,15 @@ import java.util.Arrays;
 public class GetSerasaStatus {
 
     private UserDatabaseGateway userDatabaseGateway;
+    private SerasaGateway serasaGateway;
 
     @Autowired
-    public GetSerasaStatus(UserDatabaseGateway userDatabaseGateway) {
+    public GetSerasaStatus(UserDatabaseGateway userDatabaseGateway, SerasaGateway serasaGateway) {
         this.userDatabaseGateway = userDatabaseGateway;
+        this.serasaGateway = serasaGateway;
     }
 
-    public SerasaStatus execute(String document) {
+    public SerasaStatusWrapper execute(String document) {
 
         if (StringUtils.isBlank(document)) {
             return createError("document is mandatory", document);
@@ -32,12 +37,19 @@ public class GetSerasaStatus {
             return createError("document not found", document);
         }
 
-        // TODO
-        return null;
+        SerasaIntegrationStatus serasaIntegrationStatus = serasaGateway.getStatus(document);
+
+        for (SerasaStatus status : SerasaStatus.values()) {
+            if (status.getValue().equals(serasaIntegrationStatus.getCodigoDeStatus())) {
+                return new SerasaStatusWrapper(document, status, null);
+            }
+        }
+
+        return createError("serasa integration status invalid", document);
     }
 
-    private SerasaStatus createError(String message, String document) {
-        return new SerasaStatus(document, null, Arrays.asList(new Error(message)));
+    private SerasaStatusWrapper createError(String message, String document) {
+        return new SerasaStatusWrapper(document, null, Arrays.asList(new Error(message)));
     }
 
 }
