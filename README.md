@@ -11,10 +11,6 @@ Devemos:
 - o nome  
 - retornar aos seguintes atributos:  
 
-Regras:
-- Nome é obrigatório e não pode ser vazio
-- CPF é obrigatório e não pode ser vazio
-
 URL a ser criado: GET: /users  
 ```json
   {
@@ -25,7 +21,9 @@ URL a ser criado: GET: /users
     },]
   }
 ```
-
+Regras:
+- Nome é obrigatório e não pode ser vazio
+- CPF é obrigatório e não pode ser vazio
 
 Status para retonar:
 - 201 em caso de sucesso
