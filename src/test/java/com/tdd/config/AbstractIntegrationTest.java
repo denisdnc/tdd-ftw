@@ -8,7 +8,7 @@ import org.springframework.test.context.web.WebAppConfiguration;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = ApplicationIntegrationTestConfig.class)
-@ActiveProfiles("unit-test")
+@ActiveProfiles("test")
 @WebAppConfiguration
 public abstract class AbstractIntegrationTest {
 }

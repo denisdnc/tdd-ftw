@@ -67,6 +67,7 @@ Status para retonar:
 - 200 em caso de sucesso
 - 422 em caso de CPF não cadastrado
 - 500 em caso de erro de servidor
+- 422 em CPF não encontrado na API do SERASA - opcional
     
 detalhes da API do SERASA:
 url: http://wispy-thunder-8951.getsandbox.com/users/cpf/status/{cpf}
@@ -76,6 +77,7 @@ possíveis retornos da mock:
 Entrada: 04715476975
 
 Saída:
+status: 200
 ```json
 {
     "codigoDeStatus": "1" 
@@ -85,6 +87,7 @@ Saída:
 Entrada: 73485234478
 
 Saída:
+status: 200
 ```json
 {
     "codigoDeStatus": "2"
@@ -94,6 +97,7 @@ Saída:
 Entrada: demais valores
 
 Saída:
+status: 422
 ```json
 {
     "errors": [{

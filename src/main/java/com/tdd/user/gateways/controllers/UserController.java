@@ -41,7 +41,14 @@ public class UserController {
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<SerasaStatusWrapper> getSerasaStatus(@PathVariable(name = "document") String document) {
-        return new ResponseEntity<>(getSerasaStatus.execute(document), HttpStatus.CREATED);
+
+        SerasaStatusWrapper result = getSerasaStatus.execute(document);
+
+        if (CollectionUtils.isNotEmpty(result.getErrors())) {
+            return new ResponseEntity<>(result, HttpStatus.UNPROCESSABLE_ENTITY);
+        }
+
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
 }

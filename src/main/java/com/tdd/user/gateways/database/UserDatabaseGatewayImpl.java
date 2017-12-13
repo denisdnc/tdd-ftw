@@ -21,7 +21,6 @@ public class UserDatabaseGatewayImpl implements UserDatabaseGateway {
 
     @Override
     public User findByDocument(String document) {
-        // TODO
-        return null;
+        return repository.findByDocument(document);
     }
 }

@@ -7,10 +7,19 @@ import com.tdd.config.AbstractIntegrationTest;
 import com.tdd.user.domains.SerasaStatus;
 import com.tdd.user.domains.SerasaStatusWrapper;
 import com.tdd.user.domains.User;
+import com.tdd.user.gateways.httpclient.SerasaClient;
+import com.tdd.user.gateways.httpclient.SerasaGateway;
+import com.tdd.user.gateways.httpclient.SerasaIntegrationStatus;
+import com.tdd.user.usecases.CreateUser;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
@@ -18,8 +27,8 @@ import org.springframework.test.web.servlet.MvcResult;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
 
 public class UserControllerTest extends AbstractIntegrationTest {
@@ -31,6 +40,13 @@ public class UserControllerTest extends AbstractIntegrationTest {
     private MockMvc mockMvc;
 
     private ObjectMapper objectMapper;
+
+    @Mock
+    private SerasaClient serasaClient;
+
+    @InjectMocks
+    @Autowired
+    private SerasaGateway serasaGateway;
 
     @Autowired
     private UserController controller;
@@ -45,7 +61,8 @@ public class UserControllerTest extends AbstractIntegrationTest {
 
     @Before
     public void setUp() {
-        mongoTemplate.dropCollection("recommendations");
+        MockitoAnnotations.initMocks(this);
+        mongoTemplate.dropCollection("users");
         mockMvc = standaloneSetup(controller).build();
         objectMapper = new ObjectMapper();
     }
@@ -104,8 +121,12 @@ public class UserControllerTest extends AbstractIntegrationTest {
     @Test
     public void doGetSerasaStatusSuccess() throws Exception {
         // GIVEN an user already present in the system database
-
         doPostSuccess();
+
+        // AND serasa API return valid response
+        SerasaIntegrationStatus serasaIntegrationStatus =
+                Fixture.from(SerasaIntegrationStatus.class).gimme("no debit");
+        Mockito.when(serasaClient.getStatus(Mockito.anyString())).thenReturn(serasaIntegrationStatus);
 
         // WHEN the get serasa status is called
         MvcResult result = mockMvc.perform(get(SERASA_STATUS_END_POINT + "123456789")).andReturn();
@@ -114,8 +135,25 @@ public class UserControllerTest extends AbstractIntegrationTest {
 
         // THEN should return
         assertEquals(200, result.getResponse().getStatus());
-        assertTrue(resultBody.getDocument() == "123456789");
-        assertTrue(resultBody.getStatus() == SerasaStatus.PENDING_DEBIT);
+        assertTrue(resultBody.getDocument().equals("123456789"));
+        assertTrue(resultBody.getStatus().equals(SerasaStatus.NO_DEBIT));
         assertTrue(resultBody.getErrors() == null);
+    }
+
+    @Test
+    public void doGetSerasaStatusWithError() throws Exception {
+        // GIVEN an user not present in the system database
+
+        // WHEN the get serasa status is called
+        MvcResult result = mockMvc.perform(get(SERASA_STATUS_END_POINT + "123456789")).andReturn();
+        String body = result.getResponse().getContentAsString();
+        SerasaStatusWrapper resultBody = objectMapper.readValue(body, SerasaStatusWrapper.class);
+
+        // THEN should return
+        assertEquals(422, result.getResponse().getStatus());
+        assertTrue(resultBody.getDocument().equals("123456789"));
+        assertTrue(resultBody.getStatus() == null);
+        assertTrue(resultBody.getErrors().size() == 1);
+        assertTrue(resultBody.getErrors().stream().anyMatch(error -> error.getMessage().equals("document not found")));
     }
 }
