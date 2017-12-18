@@ -2,12 +2,22 @@ package com.tdd.user.usecases;
 
 import com.tdd.user.domains.Error;
 import com.tdd.user.domains.User;
+import com.tdd.user.gateways.database.UserGateway;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class CreateUser {
+
+    private UserGateway userGateway;
+
+    @Autowired
+    public CreateUser(UserGateway userGateway) {
+        this.userGateway = userGateway;
+    }
 
     public User execute(User user) {
         List<Error> errors = new ArrayList<>();
@@ -20,6 +30,11 @@ public class CreateUser {
         }
 
         user.setErrors(errors);
+
+        if (CollectionUtils.isEmpty(errors)) {
+            userGateway.save(user);
+        }
+
         return user;
     }
 }

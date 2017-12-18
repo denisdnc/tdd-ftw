@@ -15,7 +15,7 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
 @ComponentScan(basePackages = {"com.tdd"})
 @EnableMongoRepositories({"com.tdd"})
 @EnableCaching
-public class ApplicationIntegrationTestConfig {
+public class ApplicationComponentTestConfig {
 
     private static final String DATABASE_NAME = "integration-tests";
 

@@ -3,12 +3,15 @@ package com.tdd.user
 import br.com.six2six.fixturefactory.Fixture
 import br.com.six2six.fixturefactory.loader.FixtureFactoryLoader
 import com.tdd.user.domains.User
+import com.tdd.user.gateways.database.UserGateway
 import com.tdd.user.usecases.CreateUser
-import org.apache.commons.collections4.CollectionUtils
 import spock.lang.Specification
 
 class CreateUserSpec extends Specification{
-    CreateUser createUser = new CreateUser()
+    UserGateway userGateway= Mock(UserGateway)
+    CreateUser createUser = new CreateUser(userGateway)
+
+
 
     def setupSpec (){
         FixtureFactoryLoader.loadTemplates("com.tdd")
@@ -39,6 +42,32 @@ class CreateUserSpec extends Specification{
         result.errors.isEmpty()
         result.name == "Jack"
         result.document == "123456789"
+    }
+
+    def "Deve salvar usuario no banco"() {
+        given: "receber as informações de usuário válido"
+        User user = Fixture.from(User.class).gimme("valid")
+
+        when: "tentar criar um usuário"
+        createUser.execute(user)
+
+        then: "Chamar o banco de dados passando os atributos"
+
+        1 * userGateway.save(_ as User ) >> { User item ->
+            assert item.name == "Jack"
+            assert item.document == "123456789"
+        }
+    }
+
+    def "Em caso de erro não deve salvar no banco"() {
+        given: "receber as informações de usuário inválidos"
+        User user = new User()
+
+        when: "tentar criar o usuário"
+        createUser.execute(user)
+
+        then: "Não deve salvar no banco"
+        0 * userGateway.save(_ as User )
     }
 
 }
