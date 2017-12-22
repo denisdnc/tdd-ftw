@@ -12,5 +12,10 @@ public class UserFixtures implements TemplateLoader {
             add("name", "Jack");
             add("document", "123456789");
         }});
+
+        Fixture.of(User.class).addTemplate("invalid", new Rule() {{
+            add("name", "");
+            add("document", "");
+        }});
     }
 }

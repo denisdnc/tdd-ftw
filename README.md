@@ -11,21 +11,22 @@ Devemos:
 - o nome  
 - retornar aos seguintes atributos:  
 
-Regras:
-- Nome é obrigatório e não pode ser vazio
-- CPF é obrigatório e não pode ser vazio
-
 URL a ser criado: GET: /users  
 ```json
   {
     "name": "Jack",
     "document": "04715476975",
+    "status": "0",
     "errors": [{
         "message": "document is mandatory"
     },]
   }
 ```
+http://tddftw.getsandbox.com/users/cpf/status/73485234478
 
+Regras:
+- Nome é obrigatório e não pode ser vazio
+- CPF é obrigatório e não pode ser vazio
 
 Status para retonar:
 - 201 em caso de sucesso
@@ -80,7 +81,7 @@ Saída:
 status: 200
 ```json
 {
-    "codigoDeStatus": "1" 
+    "status": "NO_DEBIT" 
 }
 ```
 
@@ -90,7 +91,7 @@ Saída:
 status: 200
 ```json
 {
-    "codigoDeStatus": "2"
+    "status": "PENDING_DEBIT"
 }
 ```
 

@@ -1,22 +1,29 @@
 package com.tdd.user.usecases;
 
 import com.tdd.user.domains.Error;
+import com.tdd.user.domains.SerasaWrapper;
 import com.tdd.user.domains.User;
 import com.tdd.user.gateways.database.UserGateway;
+import com.tdd.user.gateways.httpclient.SerasaGateway;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Component
 public class CreateUser {
 
     private UserGateway userGateway;
+    private SerasaGateway serasaGateway;
 
     @Autowired
-    public CreateUser(UserGateway userGateway) {
+    public CreateUser(UserGateway userGateway, SerasaGateway serasaGateway) {
+
         this.userGateway = userGateway;
+        this.serasaGateway = serasaGateway;
     }
 
     public User execute(User user) {
@@ -32,6 +39,8 @@ public class CreateUser {
         user.setErrors(errors);
 
         if (CollectionUtils.isEmpty(errors)) {
+            SerasaWrapper serasaWrapper = serasaGateway.find(user.getDocument());
+            user.setStatus(serasaWrapper.getStatus());
             userGateway.save(user);
         }
 

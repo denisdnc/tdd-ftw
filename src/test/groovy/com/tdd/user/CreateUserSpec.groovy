@@ -2,14 +2,17 @@ package com.tdd.user
 
 import br.com.six2six.fixturefactory.Fixture
 import br.com.six2six.fixturefactory.loader.FixtureFactoryLoader
+import com.tdd.user.domains.SerasaWrapper
 import com.tdd.user.domains.User
 import com.tdd.user.gateways.database.UserGateway
+import com.tdd.user.gateways.httpclient.SerasaGateway
 import com.tdd.user.usecases.CreateUser
 import spock.lang.Specification
 
 class CreateUserSpec extends Specification{
+    SerasaGateway serasaGateway = Mock(SerasaGateway)
     UserGateway userGateway= Mock(UserGateway)
-    CreateUser createUser = new CreateUser(userGateway)
+    CreateUser createUser = new CreateUser(userGateway, serasaGateway)
 
 
 
@@ -35,6 +38,9 @@ class CreateUserSpec extends Specification{
         given: "receber as informações de usuário válido"
         User user = Fixture.from(User.class).gimme("valid")
 
+        and: "tenha um status valido no serasa"
+        serasaGateway.find(_) >> Fixture.from(SerasaWrapper.class).gimme("pendente")
+
         when: "tentar criar um usuário"
         User result = createUser.execute(user);
 
@@ -47,6 +53,10 @@ class CreateUserSpec extends Specification{
     def "Deve salvar usuario no banco"() {
         given: "receber as informações de usuário válido"
         User user = Fixture.from(User.class).gimme("valid")
+
+        and: "tenha um status valido no serasa"
+
+        serasaGateway.find(_) >> Fixture.from(SerasaWrapper.class).gimme("pendente")
 
         when: "tentar criar um usuário"
         createUser.execute(user)
@@ -68,6 +78,21 @@ class CreateUserSpec extends Specification{
 
         then: "Não deve salvar no banco"
         0 * userGateway.save(_ as User )
+    }
+
+    def "validate user serasa status"(){
+        given: "an valid user"
+        User user = Fixture.from(User.class).gimme("valid")
+
+        and: "tenha um status valido no serasa"
+
+        serasaGateway.find(_) >> Fixture.from(SerasaWrapper.class).gimme("pendente")
+
+        when: "tentar criar um usuário"
+        User item = createUser.execute(user)
+
+        then: "Deve retornar o status do serasa"
+        item.status != null
     }
 
 }
