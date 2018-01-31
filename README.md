@@ -1,6 +1,6 @@
 # Exercício TDD
 
-## Feature: Criação de usuário
+## Feature: Criação de usuário e consulta de status no SERASA
 
 Como: usuário do sistema  
 Eu quero: me cadastrar no sistema  
@@ -16,6 +16,7 @@ URL a ser criado: GET: /users
   {
     "name": "Jack",
     "document": "04715476975",
+    "status": "NO_DEBIT",
     "errors": [{
         "message": "document is mandatory"
     },]
@@ -24,51 +25,15 @@ URL a ser criado: GET: /users
 Regras:
 - Nome é obrigatório e não pode ser vazio
 - CPF é obrigatório e não pode ser vazio
+- Consultar API do SERASA e retornar o status
 
 Status para retonar:
 - 201 em caso de sucesso
 - 422 em caso de dos campos obrigatórios não existirem
-- 500 em caso de erro de servidor
 
+### Descrição da API do SERASA
 
-## Feature: Validação de CPF no SERASA
-
-Como: usuário do sistema
-Eu quero: consultar meu CPF no SERASA
-Para que: possa saber se estou com dívidas
-
-Devemos:
-- receber o CPF informado pelo usuário
-- consultar API do SERASA
-- retornar aos seguintes atributos:
-
-URL a ser criado: GET: /users/serasa/status/{document}
-```json
-  {
-    "document": "04715476975",
-    "status": "PENDING_DEBIT",
-    "errors": [{
-        "message": "document not found"
-    }]
-  }
-```
-
-Regras:
-- validar campo obrigatório: CPF
-- verificar se ele existe no sistema e caso não exista devolver erro
-- traduzir códigos numéricos da API do SERASA para os códigos abaixo:
-    - Possíveis status:
-        - 1 = PENDING_DEBIT
-        - 2 = NO_DEBIT
-
-Status para retonar:
-- 200 em caso de sucesso
-- 422 em caso de CPF não cadastrado
-- 500 em caso de erro de servidor
-- 422 em CPF não encontrado na API do SERASA - opcional
-    
-detalhes da API do SERASA:
-url: http://wispy-thunder-8951.getsandbox.com/users/cpf/status/{cpf}
+url: http://tddftw.getsandbox.com/users/cpf/status/{cpf}
 
 possíveis retornos da mock:
 
@@ -78,7 +43,7 @@ Saída:
 status: 200
 ```json
 {
-    "codigoDeStatus": "1" 
+    "codigoDeStatus": "NO_DEBIT" 
 }
 ```
 
@@ -88,7 +53,7 @@ Saída:
 status: 200
 ```json
 {
-    "codigoDeStatus": "2"
+    "codigoDeStatus": "PENDING_DEBIT"
 }
 ```
 
